@@ -1,15 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Asynchronous JavaScript</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Asynchronous JavaScript</h1>
     <script>
-        
+      //   const second = () => {
+      //     setTimeout(() => {
+      //       console.log("second");
+      //     }, 2000);
+      //   };
+
+      //   const first = () => {
+      //     console.log("first");
+      //     second();
+      //     console.log("the end");
+      //   };
+
+      //   first();
+      //   function getRecipe() {
+      //     setTimeout(() => {
+      //       const recipeID = [1234, 12341234, 25, 345, 345];
+      //       console.log(recipeID);
+
+      //       setTimeout(
+      //         id => {
+      //           const recipe = {
+      //             title: "Fresh tomato pasta",
+      //             publisher: "Jonas"
+      //           };
+      //           console.log(`${id}: ${recipe.title}`);
+      //         },
+      //         1000,
+      //         recipeID[2]
+      //       ); //recipeID[2] is the argument called into as id
+      //     }, 1500);
+      //   }
+
+      //   getRecipe();
+
+      const getIDs = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve([1234, 12341234, 25, 345, 345]);
+        }, 1500);
+      });
+
+      const getRecipe = recID => {
+        return new Promise((resolve, reject) => {
+          setTimeout(
+            ID => {
+              const recipe = {
+                title: "Fresh tomato pasta",
+                publisher: "Jonas"
+              };
+              resolve(`${ID}: ${recipe.title}`);
+            },
+            1500,
+            recID
+          );
+        });
+      };
+
+      const getRelated = publisher => {
+        return new Promise((resolve, reject) => {
+          setTimeout(
+            pub => {
+              const recipe = { title: "Italian Pizza", publisher: "jonas" };
+              resolve(`${pub}: ${recipe.title}`);
+            },
+            1500,
+            publisher
+          );
+        });
+      };
+
+      //normal way of consuming promises
+      /*
+       getIDs
+         .then(IDs => {
+           //argument that we pass into cb is the result of the successfull promise -- the array
+           console.log(IDs);
+           return getRecipe(IDs[2]);
+         })
+         .then(recipe => {
+           console.log(recipe);
+           return getRelated("Jonas");
+         })
+         .then(recipe => {
+           console.log(recipe);
+         })
+         .catch(error => {
+           //if error occurs then use catch
+           console.log(`error`);
+         });
+         */
+
+      //async/await to consume promises without all the callbacks and promise then and catch methods.
+
+      //   async function getRecipesAW() {
+      //     const IDs = await getIDs; //first promise --await stops the code until the promise is fulfilled, if promise is resolved then the value of await expression is resolved value of the promises, then assigned to IDs
+      //     console.log(IDs);
+      //     const recipe = await getRecipe(IDs[2]);
+      //     console.log(recipe);
+      //     const related = await getRelated("mike");
+      //     console.log(related);
+
+      //     //async function always automatically returns a promise, returns the value of the resolved recipe
+      //     return recipe;
+      //   }
+
+      //   //pass cb where the argument is the resolved value of the promise
+      //   getRecipesAW().then(result => console.log);
+
+      ////////////////////////USING PROMISES WITH FETCH/////////
+
+      //fetchapi always returns a promise
+      //   function getWeather(woeid) {
+      //     fetch(
+      //       `https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/${woeid}/`
+      //     )
+      //       .then(result => {
+      //         console.log(result);
+      //         return result.json(); //convert from json to js which also returns a new promise- handle it in data variable which is recieved from result.json()
+      //       })
+      //       .then(data => {
+      //         const today = data.consolidated_weather[0];
+      //         console.log(
+      //           `Temperatures in ${data.title} stay between ${
+      //             today.min_temp
+      //           } and ${today.max_temp}.`
+      //         );
+      //       })
+      //       .catch(error => console.log(error));
+      //   }
+
+      //   getWeather(44418);
+      //   getWeather(2487956);
+
+      /////////ASYNC AWAIT FETCH//////////
+
+      async function getWeatherAW(woeid) {
+        //handle errors with try catch with async/await -- so wrap entire statement in a TRY CATCH BLOCK
+
+        try {
+          const result = await fetch(
+            `https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/${woeid}/`
+          );
+          const data = await result.json();
+          const tomorrow = data.consolidated_weather[1];
+          console.log(
+            `Temperatures in ${data.title} stay between ${
+              tomorrow.min_temp
+            } and ${tomorrow.max_temp}.`
+          );
+          return data;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      getWeatherAW(2487956);
+      let dataLondon;
+      getWeatherAW(44418).then(data => {
+        dataLondon = data;
+        console.log(dataLondon);
+      });
     </script>
-</body>
+  </body>
 </html>
