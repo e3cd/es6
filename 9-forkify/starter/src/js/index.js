@@ -1,6 +1,5 @@
 // Global app controller
 
-// 4f3360ff7fa074753710d6cfdee6a820
 import axios from "axios";
 
 async function getResults(query) {
