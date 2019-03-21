@@ -18,7 +18,7 @@ module.exports = {
       template: "./src/index.html"
     }),
     new Dotenv({
-      path: "./.env"
+      path: "./.env" //configure dotenv file to store environment variable
     })
   ],
   module: {
