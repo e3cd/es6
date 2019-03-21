@@ -11,6 +11,8 @@ const clearInput = () => {
 
 const clearResults = () => {
   elements.searchResList.innerHTML = "";
+  //clear buttons
+  elements.searchResPages.innerHTML = "";
 };
 
 /*
@@ -39,25 +41,64 @@ const limitRecipeTitle = (title, limit = 17) => {
   return title;
 };
 
+//type: 'prev' or 'next' --data-goto is used for event handler
+const createButton = (page, type) => `
+
+        <button class="btn-inline results__btn--${type}" data-goto=${
+  type === "prev" ? page - 1 : page + 1
+}>
+        <span>Page ${type === "prev" ? page - 1 : page + 1}</span>
+            <svg class="search__icon">
+                <use href="img/icons.svg#icon-triangle-${
+                  type === "prev" ? "left" : "right"
+                }"></use>
+            </svg>
+        </button>
+
+`;
+
+//function for rendering the buttons, call this from renderresults -- if we're on page 1 it should show next btn, page 2 should show page next and prev etc... -- need to know how many pages there are and which page we are on. Number of pages = numResults / resPerPage
+
+const renderButtons = (page, numResults, resPerPage) => {
+  const pages = Math.ceil(numResults / resPerPage); //ceil: 4.5 => 5
+
+  let button;
+  //logic
+  if (page === 1 && pages > 1) {
+    //button to go to next page
+    button = createButton(page, "next");
+  } else if (page < pages) {
+    //both buttons
+    button = `${createButton(page, "next")}${createButton(page, "prev")}`;
+  } else if (page === pages && pages > 1) {
+    //button go to prev page at the last page
+    button = createButton(page, "prev");
+  }
+
+  //insert element into DOM under results__pages div
+
+  elements.searchResPages.insertAdjacentHTML("afterbegin", button);
+};
+
 //function to render one recipe -- private function
 const renderRecipe = recipe => {
   const markup = `
-  <li>
-                    <a class="results__link" href="#${recipe.recipe_id}">
-                        <figure class="results__fig">
-                            <img src="${recipe.image_url}" alt="${
+    <li>
+                      <a class="results__link" href="#${recipe.recipe_id}">
+                          <figure class="results__fig">
+                              <img src="${recipe.image_url}" alt="${
     recipe.title
   }">
-                        </figure>
-                        <div class="results__data">
-                            <h4 class="results__name">${limitRecipeTitle(
-                              recipe.title
-                            )}</h4>
-                            <p class="results__author">${recipe.publisher}</p>
-                        </div>
-                    </a>
-                </li>
-    `;
+                          </figure>
+                          <div class="results__data">
+                              <h4 class="results__name">${limitRecipeTitle(
+                                recipe.title
+                              )}</h4>
+                              <p class="results__author">${recipe.publisher}</p>
+                          </div>
+                      </a>
+                  </li>
+      `;
   elements.searchResList.insertAdjacentHTML("beforeend", markup); //replace in markup
 };
 
@@ -69,7 +110,11 @@ const renderResults = (recipes, page = 1, resPerPage = 10) => {
   const start = (page - 1) * resPerPage;
   const end = page * resPerPage;
 
+  console.log(recipes);
   recipes.slice(start, end).forEach(renderRecipe);
+
+  //render pagination buttons
+  renderButtons(page, recipes.length, resPerPage);
 };
 
 module.exports = {

@@ -44,5 +44,14 @@ elements.searchForm.addEventListener("submit", e => {
   controlSearch();
 });
 
-const search = new Search("meat");
-search.getResults();
+//use event delegation to attach event listener on parent element results page
+
+elements.searchResPages.addEventListener("click", e => {
+  //use closest method to select all DOM elements that match selected parameter
+  const btn = e.target.closest(".btn-inline");
+  if (btn) {
+    const goToPage = parseInt(btn.dataset.goto, 10);
+    searchView.clearResults();
+    searchView.renderResults(state.search.result, goToPage);
+  }
+});

@@ -7,7 +7,7 @@ export default class Search {
   }
 
   async getResults() {
-    const apiKey = process.env.API_KEY_2;
+    const apiKey = process.env.API_KEY_3;
     const proxy = `https://cors-anywhere.herokuapp.com/`;
     try {
       const res = await axios.get(`${proxy}https://www.food2fork.com/api/search?key=${apiKey}&q=${
