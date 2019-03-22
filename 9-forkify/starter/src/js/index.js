@@ -2,7 +2,9 @@
 
 import Search from "./models/Search";
 import Recipe from "./models/Recipe";
-import * as searchView from "./views/searchView"; //import all function form searchView
+import * as searchView from "./views/searchView";
+import * as recipeView from "./views/recipeView";
+//import all function form searchView
 import { elements, renderLoader, clearLoader } from "./views/index";
 
 // global state of the app -- store of redux
@@ -13,7 +15,6 @@ import { elements, renderLoader, clearLoader } from "./views/index";
  - liked recipes
 */
 const state = {};
-
 /*
  * SEARCH CONTROLLER
  */
@@ -80,9 +81,17 @@ const controlRecipe = async () => {
 
   if (id) {
     // prepare ui for changes
+    recipeView.clearRecipe();
+    renderLoader(elements.recipe); //pass in the parent element
+
+    //highlight selected search item
+    if (state.search) {
+      searchView.highlightSelected(id);
+    }
 
     //create new recipe object
     state.recipe = new Recipe(id);
+
     try {
       //get recipe data and parse ingredients
       await state.recipe.getRecipe();
@@ -93,7 +102,9 @@ const controlRecipe = async () => {
       state.recipe.calcServings();
 
       // render recipe
+      clearLoader();
       console.log(state.recipe);
+      recipeView.renderRecipe(state.recipe);
     } catch (error) {
       console.log(error);
     }

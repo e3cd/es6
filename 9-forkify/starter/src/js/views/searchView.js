@@ -15,6 +15,17 @@ const clearResults = () => {
   elements.searchResPages.innerHTML = "";
 };
 
+const highlightSelected = id => {
+  const resultsArr = Array.from(document.querySelectorAll(".results__link"));
+  resultsArr.forEach(el => {
+    el.classList.remove("results__link--active");
+  });
+
+  document
+    .querySelector(`a[href="#${id}"]`)
+    .classList.add("results__link--active"); //use css selectors with all links with the attribute href
+};
+
 /*
     //Pasta with tomato and spinach iteration in    limitRecipeTitle function
     acc = 0 / acc + curr.length = 5 / newTitle =['Pasta']
@@ -121,5 +132,6 @@ module.exports = {
   getInput,
   renderResults,
   clearInput,
-  clearResults
+  clearResults,
+  highlightSelected
 };

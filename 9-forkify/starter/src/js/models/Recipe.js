@@ -59,6 +59,7 @@ export default class Recipe {
       "cup",
       "pound"
     ];
+    const units = [...unitsShort, "kg", "g"];
 
     const newIngredients = this.ingredients.map(el => {
       //1. uniform units tbsp/tablespoon = same
@@ -73,10 +74,12 @@ export default class Recipe {
 
       //3. parse ingredients into count, unit and ingredient
       const arrIng = ingredient.split(" ");
-      const unitIndex = arrIng.findIndex(el2 => unitsShort.includes(el2)); //return the index of the unit if the element is in the unitsShort array, -1 for
+      //find the index where the unit is located using findIndex -- returns true if the element that were passing is in the array and false if not
+      const unitIndex = arrIng.findIndex(el2 => units.includes(el2)); //for each current element it will test if that element is inside the unitsShort array
 
       let objIng;
       if (unitIndex > -1) {
+        //-1 = false -- couldnt find the element
         //There is a unit
         //ex. 4 1/2 cups, arrCount is [4, 1/2] --> eval("4+1/2") -> 4.5
         //ex 4 cups, arrCount is [4]
@@ -95,6 +98,7 @@ export default class Recipe {
         };
       } else if (parseInt(arrIng[0], 10)) {
         //There is no unit, but 1st element is a number
+        //parseInt -- taking the first element of the array, convert to number. If conversion successful will return to number and coerce to true, if not then return Nan which coerces to false
         objIng = {
           count: parseInt(arrIng[0], 10),
           unit: "",

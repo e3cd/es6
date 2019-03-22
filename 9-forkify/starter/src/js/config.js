@@ -1,4 +1,4 @@
-const apiKey = process.env.API_KEY_2;
+const apiKey = process.env.API_KEY;
 const proxy = process.env.PROXY;
 
 module.exports = {
