@@ -1,6 +1,7 @@
 // Global app controller
 
 import Search from "./models/Search";
+import Recipe from "./models/Recipe";
 import * as searchView from "./views/searchView"; //import all function form searchView
 import { elements, renderLoader, clearLoader } from "./views/index";
 
@@ -12,6 +13,10 @@ import { elements, renderLoader, clearLoader } from "./views/index";
  - liked recipes
 */
 const state = {};
+
+/*
+ * SEARCH CONTROLLER
+ */
 
 //function called when the form is submitted
 
@@ -29,13 +34,18 @@ const controlSearch = async () => {
     searchView.clearResults(); //clear the list
     renderLoader(elements.searchRes); //pass in a parent element of searchRes in renderLoader function as argument
 
-    //4. Search for recipes
-    await state.search.getResults();
+    try {
+      //4. Search for recipes
+      await state.search.getResults();
 
-    //5. Render results on UI -- only to happen when we recieve the results from api, so await 4.
+      //5. Render results on UI -- only to happen when we recieve the results from api, so await 4.
 
-    clearLoader();
-    searchView.renderResults(state.search.result); //result from Search Model
+      clearLoader();
+      searchView.renderResults(state.search.result); //result from Search Model
+    } catch (error) {
+      console.log(error);
+      clearLoader();
+    }
   }
 };
 
@@ -50,8 +60,52 @@ elements.searchResPages.addEventListener("click", e => {
   //use closest method to select all DOM elements that match selected parameter
   const btn = e.target.closest(".btn-inline");
   if (btn) {
-    const goToPage = parseInt(btn.dataset.goto, 10);
+    const goToPage = parseInt(btn.dataset.goto, 10); //base 10
     searchView.clearResults();
     searchView.renderResults(state.search.result, goToPage);
   }
 });
+
+/*
+ * RECIPE CONTROLLER
+ */
+
+//clicking on each result item gives a hashed id in the url. Use the hashchange event listener which is fired when the hash changes
+
+// function that handles recipe
+
+const controlRecipe = async () => {
+  //get the hash using location.hash -- location is the entire url,
+  const id = window.location.hash.replace("#", ""); //only want the id so use the replace string method to remove hash and replace with nothing
+
+  if (id) {
+    // prepare ui for changes
+
+    //create new recipe object
+    state.recipe = new Recipe(id);
+    try {
+      //get recipe data and parse ingredients
+      await state.recipe.getRecipe();
+      state.recipe.parseIngredients();
+
+      // calculate servings and time
+      state.recipe.calcTime();
+      state.recipe.calcServings();
+
+      // render recipe
+      console.log(state.recipe);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+};
+
+//add to global js object
+
+// window.addEventListener('hashchange', controlRecipe)
+// //add eventlistener to the load event to save the url
+// window.addEventListener('load', controlRecipe)
+
+["hashchange", "load"].forEach(event =>
+  window.addEventListener(event, controlRecipe)
+);
