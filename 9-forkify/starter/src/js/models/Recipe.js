@@ -117,4 +117,17 @@ export default class Recipe {
     });
     this.ingredients = newIngredients;
   }
+
+  updateServings(type) {
+    //servings
+    const newServings = type === "dec" ? this.servings - 1 : this.servings + 1;
+
+    //ingredients
+    //update the count in each ingredient object
+    this.ingredients.forEach(ing => {
+      ing.count *= newServings / this.servings;
+    });
+
+    this.servings = newServings;
+  }
 }
