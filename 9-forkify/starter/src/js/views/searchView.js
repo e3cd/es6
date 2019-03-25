@@ -20,10 +20,9 @@ const highlightSelected = id => {
   resultsArr.forEach(el => {
     el.classList.remove("results__link--active");
   });
-
   document
-    .querySelector(`a[href="#${id}"]`)
-    .classList.add("results__link--active"); //use css selectors with all links with the attribute href
+    .querySelector(`.results__link[href*="${id}"]`)
+    .classList.add("results__link--active");
 };
 
 /*
@@ -133,5 +132,6 @@ module.exports = {
   renderResults,
   clearInput,
   clearResults,
-  highlightSelected
+  highlightSelected,
+  limitRecipeTitle
 };

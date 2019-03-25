@@ -11,7 +11,7 @@ const renderItem = item => {
   }" class="shopping__count-value">
                         <p>g</p>
                     </div>
-                    <p class="shopping__description">Pasta</p>
+                    <p class="shopping__description">${item.ingredient}</p>
                     <button class="shopping__delete btn-tiny">
                         <svg>
                             <use href="img/icons.svg#icon-circle-with-cross"></use>
@@ -25,7 +25,7 @@ const renderItem = item => {
 
 const deleteItem = id => {
   const item = document.querySelector(`[data-itemid="${id}"]`);
-  item.parentElement.removeChild(item);
+  if (item) item.parentElement.removeChild(item);
 };
 
 module.exports = {
