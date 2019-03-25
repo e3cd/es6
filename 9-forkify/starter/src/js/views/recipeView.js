@@ -12,20 +12,22 @@ const formatCount = count => {
     // count = 0.5 --> 1/2
 
     //use destructuring
-    const [int, dec] = count
+    //newCount to deal with large decimal places using math.round
+    const newCount = Math.round(count * 10000) / 10000;
+    const [int, dec] = newCount
       .toString()
       .split(".")
       .map(el => parseInt(el, 10)); //parseInt to convert each stirng element into number
 
     //if no decimal
-    if (!dec) return count;
+    if (!dec) return newCount;
 
     if (int === 0) {
-      const fr = new Fraction(count);
+      const fr = new Fraction(newCount);
       return `${fr.numerator}/${fr.denominator}`;
     } else {
       //only convert .5 and not the integer
-      const fr = new Fraction(count - int);
+      const fr = new Fraction(newCount - int);
       return `${int} ${fr.numerator}/${fr.denominator}`;
     }
   }

@@ -20,7 +20,7 @@ import { elements, renderLoader, clearLoader } from "./views/index";
  - liked recipes
 */
 const state = {};
-window.state = state;
+
 /*
  * SEARCH CONTROLLER
  */
@@ -214,7 +214,8 @@ window.addEventListener("load", () => {
   //restore likes
   state.likes.readStorage();
 
-  //toggle like menu button
+  //toggle like menu button, if there is more than > 0 set the like button to visible
+
   likesView.toggleLikeMenu(state.likes.getNumLikes());
 
   //render existing liked recipes in liked menu
